@@ -115,8 +115,16 @@ function jwtChallenge (challenge: Challenge, req: Request, algorithm: string, em
     }
 
     challengeUtils.solveIf(challenge, () => {
-      return security.verify(token) && hasAlgorithm(token, algorithm) && hasEmail(decoded as { data: { email: string } }, email)
+      return hasValidSignature(token) && hasAlgorithm(token, algorithm) && hasEmail(decoded as { data: { email: string } }, email)
     })
+  }
+}
+
+function hasValidSignature (token: string) {
+  try {
+    return security.verify(token)
+  } catch {
+    return false
   }
 }
 
